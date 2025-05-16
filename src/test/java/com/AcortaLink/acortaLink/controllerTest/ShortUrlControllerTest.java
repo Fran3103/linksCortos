@@ -1,26 +1,37 @@
 package com.AcortaLink.acortaLink.controllerTest;
 
+import com.AcortaLink.acortaLink.Controllers.ShortUrlController;
+import com.AcortaLink.acortaLink.Services.ShortUrlService;
+import com.AcortaLink.acortaLink.exceptions.CodeNotFoundException;
+import com.AcortaLink.acortaLink.exceptions.RestExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
-import java.awt.*;
 
+
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.startsWith;
 
-@AutoConfigureMockMvc
-@SpringBootTest(properties = "spring.profiles.active=dev")
+@WebMvcTest(ShortUrlController.class)
+@Import(RestExceptionHandler.class)
 class ShortUrlControllerTest {
 
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private ShortUrlService service;
 
     @Test
     void postShortUrl() throws Exception{
@@ -37,6 +48,9 @@ class ShortUrlControllerTest {
 
     @Test
     void getNonExist() throws Exception {
+
+        when(service.getAndIncrement("Mkfi3o")).thenThrow(new CodeNotFoundException("Mkfi3o"));
+
         mockMvc.perform(get("/Mkfi3o"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("Recurso no encontrado"));
