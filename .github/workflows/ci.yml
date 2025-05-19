@@ -44,5 +44,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/linkscortos:latest
-            ghcr.io/${{ github.repository_owner }}/linkscortos:${{ github.sha }}
+            ghcr.io/fran3103/linkscortos:latest
+            ghcr.io/fran3103/linkscortos:${{ github.sha }}
