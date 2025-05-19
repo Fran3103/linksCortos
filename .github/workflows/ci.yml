@@ -1,5 +1,10 @@
 name: CI
 
+permissions:
+  contents: read   # Allow checkout and GitHub actions to read repo contents
+  packages: write # Allow publishing Docker images to GitHub Packages
+
+
 on:
   push:
     branches: [ master ]
