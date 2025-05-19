@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build-and-test:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,20 +28,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2-
 
-      - name: Build and run tests
+      - name: Build & Test with Maven
         run: mvn clean verify --batch-mode
 
-      - name: Build Docker image
-        run: docker build -t acortalink-service .
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Uncomment below to push image to Docker Hub
-      # - name: Log in to Docker Hub
-      #   uses: docker/login-action@v2
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
-      #
-      # - name: Push image
-      #   run: |
-      #     docker tag acortalink-service ${{ secrets.DOCKERHUB_USERNAME }}/acortalink-service:latest
-      #     docker push ${{ secrets.DOCKERHUB_USERNAME }}/acortalink-service:latest
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/linksCortos:latest
+            ghcr.io/${{ github.repository_owner }}/linksCortos:${{ github.sha }}
