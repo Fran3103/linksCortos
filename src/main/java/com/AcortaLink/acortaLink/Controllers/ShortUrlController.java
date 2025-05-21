@@ -21,7 +21,6 @@ import java.net.URI;
 
 
 @RestController
-@CrossOrigin(origins = "https://linkscortos-1.onrender.com")
 public class ShortUrlController {
 
     @Autowired
